@@ -129,13 +129,18 @@ export default function RageBot() {
         </div>
       </header>
 
-      <main className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 gap-6 px-6 py-6 xl:grid-cols-[240px_1fr_280px]">
-        <aside className="hidden min-w-0 flex-col justify-center xl:flex">
-          <p className="text-5xl font-black leading-[1.05] tracking-tight text-zinc-100">
-            Tell Jev <span className="text-red-500">everything.</span>
-          </p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-400">
-            Vent. Confess. Overshare. RageBot listens, responds, and remembers the weirdest bits.
+      <main className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 gap-6 px-6 py-6 xl:grid-cols-[300px_1fr_280px]">
+        <aside className="hidden min-w-0 flex-col justify-between py-8 xl:flex">
+          <div>
+            <p className="text-7xl font-semibold leading-[1.02] tracking-tight text-zinc-100">
+              Tell Jev <span className="text-red-500">everything.</span>
+            </p>
+            <p className="mt-5 max-w-[26ch] text-[15px] leading-relaxed text-zinc-400">
+              Vent. Confess. Overshare. RageBot listens, responds, and remembers the weirdest bits.
+            </p>
+          </div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-600">
+            No scripts · No mercy
           </p>
         </aside>
         <div className="flex min-h-0 min-w-0 flex-col">
