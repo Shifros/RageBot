@@ -114,7 +114,7 @@ export default function RageBot() {
   return (
     <div className="flex h-dvh flex-col bg-zinc-950 font-sans text-zinc-100">
       <header className="border-b border-zinc-800 bg-zinc-950">
-        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-2 px-6 py-5">
+        <div className="mx-auto flex w-full max-w-[1600px] flex-wrap items-center justify-between gap-2 px-6 py-5">
           <div>
             <h1 className="text-2xl font-black tracking-tight">
               RAGE<span className="text-red-500">BOT</span>
@@ -129,10 +129,10 @@ export default function RageBot() {
         </div>
       </header>
 
-      <main className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 gap-6 px-6 py-6 xl:grid-cols-[300px_1fr_280px]">
+      <main className="mx-auto grid min-h-0 w-full max-w-[1600px] flex-1 gap-6 px-6 py-6 xl:grid-cols-[1fr_1.3fr_0.8fr]">
         <aside className="hidden min-w-0 flex-col justify-between py-8 xl:flex">
           <div>
-            <p className="text-7xl font-semibold leading-[1.02] tracking-tight text-zinc-100">
+            <p className="text-[clamp(3rem,4.5vw,5rem)] font-semibold leading-[1.02] tracking-tight break-words text-zinc-100">
               Tell Jev <span className="text-red-500">everything.</span>
             </p>
             <p className="mt-5 max-w-[26ch] text-[15px] leading-relaxed text-zinc-400">
