@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Msg {
   role: "user" | "bot";
@@ -51,15 +51,19 @@ export default function RageBot() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rage, setRage] = useState<number | null>(null);
-  const [oddities, setOddities] = useState<string[]>(() => {
+  // Start empty so server and first client render match; stored oddities
+  // load after hydration (reading localStorage during render mismatches SSR).
+  const [oddities, setOddities] = useState<string[]>([]);
+
+  useEffect(() => {
     try {
-      if (typeof window === "undefined") return [];
       const raw = window.localStorage.getItem("ragebot-odd");
-      return raw ? (JSON.parse(raw) as string[]).slice(0, 10) : [];
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only hydration from localStorage
+      if (raw) setOddities((JSON.parse(raw) as string[]).slice(0, 10));
     } catch {
-      return [];
+      /* ignore */
     }
-  });
+  }, []);
   const boxRef = useRef<HTMLDivElement>(null);
 
   async function send(text?: string) {
