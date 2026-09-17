@@ -51,6 +51,15 @@ export default function RageBot() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rage, setRage] = useState<number | null>(null);
+  const [oddities, setOddities] = useState<string[]>(() => {
+    try {
+      if (typeof window === "undefined") return [];
+      const raw = window.localStorage.getItem("ragebot-odd");
+      return raw ? (JSON.parse(raw) as string[]).slice(0, 10) : [];
+    } catch {
+      return [];
+    }
+  });
   const boxRef = useRef<HTMLDivElement>(null);
 
   async function send(text?: string) {
@@ -77,6 +86,17 @@ export default function RageBot() {
       }
       setMessages((prev) => [...prev, { role: "bot", text: data.text, id: data.id }]);
       if (typeof data.rage === "number") setRage(data.rage);
+      if (data.odd === true) {
+        setOddities((prev) => {
+          const next = [message, ...prev].slice(0, 10);
+          try {
+            window.localStorage.setItem("ragebot-odd", JSON.stringify(next));
+          } catch {
+            /* ignore */
+          }
+          return next;
+        });
+      }
       requestAnimationFrame(() =>
         boxRef.current?.scrollTo({ top: boxRef.current.scrollHeight, behavior: "smooth" }),
       );
@@ -90,7 +110,7 @@ export default function RageBot() {
   return (
     <div className="flex h-dvh flex-col bg-zinc-950 font-sans text-zinc-100">
       <header className="border-b border-zinc-800 bg-zinc-950">
-        <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-2 px-6 py-5">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-2 px-6 py-5">
           <div>
             <h1 className="text-2xl font-black tracking-tight">
               RAGE<span className="text-red-500">BOT</span>
@@ -105,7 +125,8 @@ export default function RageBot() {
         </div>
       </header>
 
-      <main className="mx-auto flex min-h-0 w-full max-w-3xl flex-1 flex-col px-6 py-6">
+      <main className="mx-auto grid min-h-0 w-full max-w-6xl flex-1 gap-6 px-6 py-6 xl:grid-cols-[1fr_280px]">
+        <div className="flex min-h-0 min-w-0 flex-col">
         <div
           ref={boxRef}
           className="min-h-[320px] flex-1 space-y-3 overflow-y-auto rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4"
@@ -183,6 +204,46 @@ export default function RageBot() {
         <footer className="mt-6 text-center text-xs text-zinc-600">
           RageBot listens and responds. Powered by Jev.
         </footer>
+        </div>
+
+        <aside className="min-w-0 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4 xl:sticky xl:top-6 xl:max-h-[70vh] xl:overflow-y-auto">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold tracking-wide text-zinc-300">WEIRDEST THINGS SAID 🤪</h2>
+            {oddities.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setOddities([]);
+                  try {
+                    window.localStorage.removeItem("ragebot-odd");
+                  } catch {
+                    /* ignore */
+                  }
+                }}
+                className="text-[11px] text-zinc-500 hover:underline"
+              >
+                clear
+              </button>
+            )}
+          </div>
+          {oddities.length === 0 ? (
+            <p className="mt-2 text-xs leading-relaxed text-zinc-500">
+              Nothing unhinged yet. Say something so bizarre even RageBot short-circuits and it lands here.
+            </p>
+          ) : (
+            <ol className="mt-3 space-y-2">
+              {oddities.map((o, i) => (
+                <li
+                  key={`${i}-${o.slice(0, 12)}`}
+                  className="rounded-xl bg-zinc-800/70 px-3 py-2 text-xs leading-relaxed text-zinc-200"
+                >
+                  <span className="mr-1.5 font-mono font-bold text-red-400">#{oddities.length - i}</span>
+                  {o}
+                </li>
+              ))}
+            </ol>
+          )}
+        </aside>
       </main>
     </div>
   );
