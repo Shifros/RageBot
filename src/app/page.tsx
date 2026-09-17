@@ -27,6 +27,53 @@ function RageMeter({ rage }: { rage: number | null }) {
   );
 }
 
+function RageAvatar() {
+  return (
+    <span
+      aria-hidden
+      className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full"
+    >
+      <svg viewBox="0 0 32 32" className="h-full w-full">
+        <circle cx="16" cy="16" r="16" fill="#7f1d1d" />
+        <circle cx="16" cy="16" r="15" fill="none" stroke="#ef4444" strokeWidth="1.5" opacity="0.6" />
+        <path d="M7 10.5 13.5 13" stroke="#fecaca" strokeWidth="2.4" strokeLinecap="round" />
+        <path d="M25 10.5 18.5 13" stroke="#fecaca" strokeWidth="2.4" strokeLinecap="round" />
+        <circle cx="11" cy="17.5" r="3" fill="#fff" />
+        <circle cx="21" cy="17.5" r="3" fill="#fff" />
+        <circle cx="11.8" cy="18.2" r="1.3" fill="#7f1d1d" />
+        <circle cx="21.8" cy="18.2" r="1.3" fill="#7f1d1d" />
+        <path
+          d="M9 24.5 12 22.5 15 24.5 18 22.5 21 24.5 23.5 23"
+          fill="none"
+          stroke="#fecaca"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  );
+}
+
+function UserAvatar() {
+  return (
+    <span
+      aria-hidden
+      className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full"
+    >
+      <svg viewBox="0 0 32 32" className="h-full w-full">
+        <circle cx="16" cy="16" r="16" fill="#3f3f46" />
+        <circle cx="16" cy="13" r="7" fill="#e4e4e7" />
+        <path d="M9 12a7 7 0 0 1 14 0v1H9v-1z" fill="#27272a" />
+        <circle cx="13.4" cy="13.4" r="1.1" fill="#27272a" />
+        <circle cx="18.6" cy="13.4" r="1.1" fill="#27272a" />
+        <path d="M13 16.6q3 2.4 6 0" fill="none" stroke="#27272a" strokeWidth="1.4" strokeLinecap="round" />
+        <path d="M8 22q8 6 16 0v6H8v-6z" fill="#52525b" />
+      </svg>
+    </span>
+  );
+}
+
 function TypingBlobs() {
   return (
     <div className="flex justify-start">
@@ -153,14 +200,7 @@ export default function RageBot() {
               key={i}
               className={`flex items-end gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
             >
-              {m.role === "bot" && (
-                <span
-                  aria-hidden
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600/20 text-lg"
-                >
-                  😡
-                </span>
-              )}
+              {m.role === "bot" && <RageAvatar />}
               <div
                 className={`max-w-[80%] rounded-2xl px-4 py-2 text-[15px] leading-relaxed ${
                   m.role === "user" ? "bg-red-600 text-white" : "bg-zinc-800 text-zinc-100"
@@ -168,14 +208,7 @@ export default function RageBot() {
               >
                 {m.text}
               </div>
-              {m.role === "user" && (
-                <span
-                  aria-hidden
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-700 text-lg"
-                >
-                  🧑
-                </span>
-              )}
+              {m.role === "user" && <UserAvatar />}
             </div>
           ))}
           {loading && <TypingBlobs />}
