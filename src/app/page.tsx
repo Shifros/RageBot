@@ -218,8 +218,16 @@ export default function RageBot() {
         </form>
         {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
 
-        <footer className="mt-6 text-center text-xs text-zinc-600">
-          RageBot listens and responds. Powered by Jev.
+        <footer className="mt-6 flex items-center justify-between text-xs text-zinc-600">
+          <span>RageBot listens and responds. Powered by Jev.</span>
+          <a
+            href="https://typesafe.ai/"
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium text-zinc-400 hover:text-red-400 hover:underline"
+          >
+            access TypeSafe →
+          </a>
         </footer>
         </div>
 
