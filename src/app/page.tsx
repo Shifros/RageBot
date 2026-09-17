@@ -10,6 +10,23 @@ interface Msg {
 
 const STARTERS = ["Hello", "How are you?", "You broken?", "Make me angry", "Bye"];
 
+function RageMeter({ rage }: { rage: number | null }) {
+  if (rage === null) return null;
+  const pct = Math.max(0, Math.min(2, rage)) * 50;
+  const label = rage < 0.7 ? "😌 calm" : rage < 1.4 ? "😠 simmering" : "🤬 RAGING";
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-xs font-medium text-zinc-400">rage {label}</span>
+      <div className="h-2 w-28 overflow-hidden rounded-full bg-zinc-800">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-amber-500 to-red-600 transition-all duration-500"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function TypingBlobs() {
   return (
     <div className="flex justify-start">
@@ -28,11 +45,12 @@ function TypingBlobs() {
 
 export default function RageBot() {
   const [messages, setMessages] = useState<Msg[]>([
-    { role: "bot", text: "I'm RageBot. I can't talk. I listen. Say something — I dare you." },
+    { role: "bot", text: "I'm RageBot. I listen. I respond. Say something — I dare you." },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [rage, setRage] = useState<number | null>(null);
   const boxRef = useRef<HTMLDivElement>(null);
 
   async function send(text?: string) {
@@ -58,6 +76,7 @@ export default function RageBot() {
         return;
       }
       setMessages((prev) => [...prev, { role: "bot", text: data.text, id: data.id }]);
+      if (typeof data.rage === "number") setRage(data.rage);
       requestAnimationFrame(() =>
         boxRef.current?.scrollTo({ top: boxRef.current.scrollHeight, behavior: "smooth" }),
       );
@@ -76,12 +95,13 @@ export default function RageBot() {
             <h1 className="text-2xl font-black tracking-tight">
               RAGE<span className="text-red-500">BOT</span>
             </h1>
-            <p className="text-sm text-zinc-400">It can&apos;t talk. It listens. Powered by Jev.</p>
+            <p className="text-sm text-zinc-400">It listens. It responds. Powered by Jev.</p>
           </div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 px-3 py-1 text-xs font-medium text-red-400">
             <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
             listening
           </span>
+          <RageMeter rage={rage} />
         </div>
       </header>
 
@@ -161,7 +181,7 @@ export default function RageBot() {
         {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
 
         <footer className="mt-6 text-center text-xs text-zinc-600">
-          RageBot can&apos;t talk. It listens. Powered by Jev.
+          RageBot listens and responds. Powered by Jev.
         </footer>
       </main>
     </div>

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "RageBot — It Can't Talk. It Listens.",
-  description: "RageBot can't talk, but it can listen. Powered by Jev.",
+  title: "RageBot — It Listens. It Responds.",
+  description: "RageBot listens and responds. Powered by Jev.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

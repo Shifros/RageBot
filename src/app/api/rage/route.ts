@@ -19,7 +19,7 @@ async function askLayer(
   state: string,
   instructions: string,
   criteria: Record<string, string>,
-): Promise<{ id: string; confidence: number | null } | null> {
+): Promise<{ id: string; confidence: number | null; rage: number | null } | null> {
   const upstream = await fetch(UPSTREAM, {
     method: "POST",
     headers: {
@@ -29,15 +29,25 @@ async function askLayer(
     body: JSON.stringify({
       state,
       model: "jev-latest",
-      questions: { reply: { type: "choice", instructions, criteria } },
+      questions: {
+        reply: { type: "choice", instructions, criteria },
+        rage: {
+          type: "score",
+          instructions: "How enraged is the person right now, based on what they just said?",
+          criteria: ["Calm and chill", "Simmering, getting annoyed", "Full rage, about to explode"],
+        },
+      },
     }),
   });
   if (!upstream.ok) return null;
   const data = await upstream.json().catch(() => ({}));
-  const answer = (data as { answers?: { reply?: { choice?: string; confidence?: number } } })
-    .answers?.reply;
-  if (!answer?.choice) return null;
-  return { id: answer.choice, confidence: answer.confidence ?? null };
+  const answers = (data as { answers?: { reply?: { choice?: string; confidence?: number }; rage?: { score?: number } } }).answers;
+  if (!answers?.reply?.choice) return null;
+  return {
+    id: answers.reply.choice,
+    confidence: answers.reply.confidence ?? null,
+    rage: typeof answers.rage?.score === "number" ? answers.rage.score : null,
+  };
 }
 
 const L2_TEXT = new Map(FAKEBOT2_REPLIES.map((r) => [r.id, r.text]));
@@ -104,7 +114,7 @@ export async function POST(req: NextRequest) {
     for (const id of recentBotIds) delete c1[id];
     const p1 = await askLayer(apiKey, state, `${baseInstructions} ${avoidLine}`, c1);
     if (p1 && p1.id !== TRIGGER_ID && (p1.confidence ?? 1) >= ESCALATE_BELOW) {
-      return NextResponse.json({ text: fakebotText(p1.id) });
+      return NextResponse.json({ text: fakebotText(p1.id), rage: p1.rage });
     }
 
     // Layer 2 (backup pack)
@@ -117,11 +127,11 @@ export async function POST(req: NextRequest) {
       c2,
     );
     if (p2 && p2.id !== TRIGGER_ID && (p2.confidence ?? 1) >= ESCALATE_BELOW && L2_TEXT.has(p2.id)) {
-      return NextResponse.json({ text: L2_TEXT.get(p2.id) });
+      return NextResponse.json({ text: L2_TEXT.get(p2.id), rage: p2.rage });
     }
 
     // Layer 3: gibberish, no API
-    return NextResponse.json({ text: gibberish(clean + Date.now()) });
+    return NextResponse.json({ text: gibberish(clean + Date.now()), rage: p2?.rage ?? p1?.rage ?? null });
   } catch {
     return NextResponse.json({ text: gibberish(clean) });
   }
